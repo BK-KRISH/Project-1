@@ -2,8 +2,6 @@ pipeline {
   agent any
   environment {
     IMAGE = "yourdockerhubid/college-login"
-        HTTP_PROXY = "http://your.proxy:port"      
-        HTTPS_PROXY = "http://your.proxy:port" 
   }
   stages {
     stage('Checkout') {
