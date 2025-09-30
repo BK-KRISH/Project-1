@@ -18,11 +18,11 @@ pipeline {
     }
     stage('Push to DockerHub') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           bat """
-            docker login -u %USER% -p %PASS%
-            docker push %USER%/college-login:${BUILD_NUMBER}
-            docker push %USER%/college-login:latest
+            docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+            docker push ${IMAGE}:${BUILD_NUMBER}
+            docker push ${IMAGE}:latest
           """
         }
       }
@@ -30,9 +30,8 @@ pipeline {
     stage('Deploy') {
       steps {
         bat "docker rm -f college-login 2>nul"
-        bat "docker run -d -p 8080:80 --name college-login %USER%/college-login:latest"
+        bat "docker run -d -p 8080:80 --name college-login ${IMAGE}:latest"
       }
     }
   }
 }
-
