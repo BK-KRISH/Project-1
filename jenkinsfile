@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    IMAGE = "yourdockerhubid/college-login"
+    IMAGE = "bkkrish007/college-login"
   }
   stages {
     stage('Checkout') {
@@ -21,8 +21,8 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
           bat """
             docker login -u %USER% -p %PASS%
-            docker push ${IMAGE}:${BUILD_NUMBER}
-            docker push ${IMAGE}:latest
+            docker push %USER%/college-login:${BUILD_NUMBER}
+            docker push %USER%/college-login:latest
           """
         }
       }
@@ -30,7 +30,7 @@ pipeline {
     stage('Deploy') {
       steps {
         bat "docker rm -f college-login 2>nul"
-        bat "docker run -d -p 8080:80 --name college-login ${IMAGE}:latest"
+        bat "docker run -d -p 8080:80 --name college-login %USER%/college-login:latest"
       }
     }
   }
